@@ -20,4 +20,13 @@
         android:backgroundTint="@color/white"
         android:hapticFeedbackEnabled="true" />
 
+    <Button
+        android:id="@+id/switchCamButton"
+        android:layout_width="59dp"
+        android:layout_height="64dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/white"
+        android:hapticFeedbackEnabled="true" />
+
 </FrameLayout>

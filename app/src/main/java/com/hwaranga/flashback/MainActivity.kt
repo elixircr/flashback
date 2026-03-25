@@ -26,7 +26,15 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var cameraExecutor: ExecutorService
 
+    private lateinit var switchCamButton: Button
+
     private var imageCapture: ImageCapture? = null
+
+    private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+    private var cameraProvider: ProcessCameraProvider? = null
+
+
 
     // sets constant vars
     companion object {
@@ -41,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         // sets the UI as vars using the set ID's
         previewView = findViewById(R.id.previewView)
         cameraButton = findViewById(R.id.cameraButton)
+        switchCamButton = findViewById(R.id.switchCamButton)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
@@ -53,6 +62,10 @@ class MainActivity : AppCompatActivity() {
         // runs if button was pressed
         cameraButton.setOnClickListener {
             takePhoto()
+        }
+
+        switchCamButton.setOnClickListener {
+            switchCam()
         }
     }
 
@@ -81,23 +94,26 @@ class MainActivity : AppCompatActivity() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
-
-            val preview = Preview.Builder().build().also {
-                it.surfaceProvider = previewView.surfaceProvider
-            }
-
-            imageCapture = ImageCapture.Builder().build()
-
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-            try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
-            } catch(e: Exception) {
-                Toast.makeText(this, "Camera failed: ${e.message}", Toast.LENGTH_LONG).show()
-            }
+            cameraProvider = cameraProviderFuture.get()
+            bindCamera()
         }, ContextCompat.getMainExecutor(this))
+    }
+
+    private fun bindCamera() {
+        val cameraProvider = cameraProvider ?: return
+
+        val preview = Preview.Builder().build().also {
+            it.surfaceProvider = previewView.surfaceProvider
+        }
+
+        imageCapture = ImageCapture.Builder().build()
+
+        try {
+            cameraProvider.unbindAll()
+            cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
+        } catch(e: Exception) {
+            Toast.makeText(this, "Camera failed: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun takePhoto() {
@@ -120,6 +136,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun switchCam() {
+        cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA)
+            CameraSelector.DEFAULT_FRONT_CAMERA
+        else
+            CameraSelector.DEFAULT_BACK_CAMERA
+
+        bindCamera()
     }
 
     override fun onDestroy() {
