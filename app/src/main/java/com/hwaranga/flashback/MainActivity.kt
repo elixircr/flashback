@@ -20,6 +20,10 @@ import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
 
+
+    // variables
+
+    // lateinit means not defined yet but will be later
     private lateinit var previewView: PreviewView
 
     private lateinit var cameraButton: Button
@@ -28,16 +32,19 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var switchCamButton: Button
 
+    // means that this var is nullable
     private var imageCapture: ImageCapture? = null
-
-    private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
     private var cameraProvider: ProcessCameraProvider? = null
 
+    private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
 
-    // sets constant vars
+
+
+    // sets companion object func can be seen as a static class holder for variables
     companion object {
+        // const val means that this value will be hardcoded to be 100 and does not change
         private const val CAMERA_PERMISSION_CODE = 100
     }
 
@@ -119,7 +126,7 @@ class MainActivity : AppCompatActivity() {
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
 
-        val photoFile = File(externalMediaDirs.firstOrNull(), "test_${System.currentTimeMillis()}.jpg")
+        val photoFile = File(externalMediaDirs.firstOrNull(), "flashback_${System.currentTimeMillis()}.jpg")
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
