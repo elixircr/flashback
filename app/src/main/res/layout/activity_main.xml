@@ -9,7 +9,17 @@
     <androidx.camera.view.PreviewView
         android:id="@+id/previewView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+
+        <Button
+            android:id="@+id/switchCamButton"
+            android:layout_width="59dp"
+            android:layout_height="64dp"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/white"
+            android:hapticFeedbackEnabled="true" />
+    </androidx.camera.view.PreviewView>
 
     <Button
         android:id="@+id/cameraButton"
@@ -21,7 +31,7 @@
         android:hapticFeedbackEnabled="true" />
 
     <Button
-        android:id="@+id/switchCamButton"
+        android:id="@+id/galleryButton"
         android:layout_width="59dp"
         android:layout_height="64dp"
         android:layout_gravity="bottom|end"

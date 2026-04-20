@@ -1,6 +1,7 @@
 package com.hwaranga.flashback
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Button
@@ -39,6 +40,8 @@ class MainActivity : AppCompatActivity() {
 
     private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
+    private lateinit var galleryButton: Button
+
 
 
 
@@ -73,6 +76,12 @@ class MainActivity : AppCompatActivity() {
 
         switchCamButton.setOnClickListener {
             switchCam()
+        }
+
+        galleryButton = findViewById(R.id.galleryButton)
+
+        galleryButton.setOnClickListener {
+            startActivity(Intent(this, GalleryActivity::class.java))
         }
     }
 
