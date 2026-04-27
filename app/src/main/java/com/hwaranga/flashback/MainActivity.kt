@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
 
-        val photoFile = File(externalMediaDirs.firstOrNull(), "flashback_${System.currentTimeMillis()}.jpg")
+        val photoFile = File(filesDir, "flashback_${System.currentTimeMillis()}.jpg")
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 

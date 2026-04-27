@@ -6,11 +6,13 @@
     android:layout_height="match_parent"
     tools:ignore="ExtraText">
 
+<!--    covers entire screen with the camera preview-->
     <androidx.camera.view.PreviewView
         android:id="@+id/previewView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+<!--    adds camera switch button-->
     <Button
         android:id="@+id/switchCamButton"
         android:layout_width="59dp"
@@ -20,6 +22,7 @@
         android:backgroundTint="@color/white"
         android:hapticFeedbackEnabled="true" />
 
+<!--    adds camera shutter button-->
     <Button
         android:id="@+id/cameraButton"
         android:layout_width="59dp"
@@ -29,6 +32,7 @@
         android:backgroundTint="@color/white"
         android:hapticFeedbackEnabled="true" />
 
+<!--    adds gallery button-->
     <Button
         android:id="@+id/galleryButton"
         android:layout_width="59dp"

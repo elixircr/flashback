@@ -4,7 +4,6 @@
 
     <uses-feature android:name="android.hardware.camera.any"/>
     <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="36"/>
 
     <application
@@ -28,6 +27,10 @@
         <activity
             android:name=".GalleryActivity"
             android:exported="false" />
+        <activity
+            android:name=".PhotoViewActivity"
+            android:exported="false" />
     </application>
+
 
 </manifest>
