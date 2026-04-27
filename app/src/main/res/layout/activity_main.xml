@@ -1,46 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:ignore="ExtraText">
 
+<!--    covers entire screen with the camera preview-->
     <androidx.camera.view.PreviewView
         android:id="@+id/previewView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <LinearLayout
-        android:id="@+id/expiryContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|center_horizontal"
-        android:layout_marginTop="16dp"
-        android:background="#80000000"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp"
-        android:orientation="horizontal"
-        android:gravity="center">
-
-        <TextView
-            android:id="@+id/expiryLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="30d"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
-
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginStart="4dp"
-            android:src="@android:drawable/arrow_down_float"
-            app:tint="@color/white" />
-
-    </LinearLayout>
-
+<!--    adds camera switch button-->
     <Button
         android:id="@+id/switchCamButton"
         android:layout_width="59dp"
@@ -50,6 +22,7 @@
         android:backgroundTint="@color/white"
         android:hapticFeedbackEnabled="true" />
 
+<!--    adds camera shutter button-->
     <Button
         android:id="@+id/cameraButton"
         android:layout_width="59dp"
@@ -59,6 +32,7 @@
         android:backgroundTint="@color/white"
         android:hapticFeedbackEnabled="true" />
 
+<!--    adds gallery button-->
     <Button
         android:id="@+id/galleryButton"
         android:layout_width="59dp"

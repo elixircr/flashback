@@ -12,45 +12,47 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import java.io.File
 import android.content.Intent
-import android.widget.TextView
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class GalleryActivity : AppCompatActivity() {
-
     private lateinit var recyclerView: RecyclerView
 
+    // start function
     override fun onCreate(savedInstanceState: Bundle?) {
+        // needed things
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gallery)
 
+        // sets var to view widget set in activity_gallery.xml
         recyclerView = findViewById(R.id.galleryRecyclerView)
+        // sets recyclerview to grid with 3 rows
         recyclerView.layoutManager = GridLayoutManager(this, 3)
 
         // loads only photos taken by this app
         val photos = getAppPhotos()
+        // adapter sets list into ui
         recyclerView.adapter = GalleryAdapter(photos)
 
+        // back button
         findViewById<ImageButton>(R.id.backButton).setOnClickListener {
-            finish() // closes this Activity and goes back, like popping a scene in Unity
+            finish() // finish func closes current activity
         }
     }
 
+    // func
     private fun getAppPhotos(): List<File> {
-        val dir = externalMediaDirs.firstOrNull() ?: return emptyList()
-        return dir.listFiles { file ->
+        // gets all the jpg files starting with flashback_, sorted by the most recently taken as a list
+        return filesDir.listFiles { file ->
             file.name.startsWith("flashback_") && file.name.endsWith(".jpg")
         }?.sortedByDescending { it.lastModified() } ?: emptyList()
     }
 
-    // Adapter — like a script that manages a list of UI elements
+    // gets list of the photos in new class and sends to adapter ???
     class GalleryAdapter(private val photos: List<File>) :
         RecyclerView.Adapter<GalleryAdapter.PhotoViewHolder>() {
 
+            // sets viewholder to a .xml file so it doesnt get called for every photo
         class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val imageView: ImageView = view.findViewById(R.id.photoImageView)
-            val expiryBadge: TextView = view.findViewById(R.id.expiryBadge)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
@@ -67,25 +69,7 @@ class GalleryActivity : AppCompatActivity() {
                 .centerCrop()
                 .into(holder.imageView)
 
-            // parse days remaining from filename
-            try {
-                val parts = photo.nameWithoutExtension.split("_")
-                val datePart = "${parts[1]}_${parts[2]}"
-                val expiryDays = parts[3].removeSuffix("d").toInt()
-
-                val sdf = SimpleDateFormat("ddMMyy_HHmmss", Locale.getDefault())
-                val takenDate = sdf.parse(datePart)!!
-                val expiryMs = expiryDays * 24 * 60 * 60 * 1000L
-                val expiryDate = Date(takenDate.time + expiryMs)
-
-                val daysLeft = ((expiryDate.time - Date().time) / (1000 * 60 * 60 * 24)).toInt()
-                    .coerceAtLeast(0)
-
-                holder.expiryBadge.text = "${daysLeft}d"
-            } catch (e: Exception) {
-                holder.expiryBadge.text = ""
-            }
-
+            // open full screen view when tile is tapped
             holder.imageView.setOnClickListener {
                 val intent = Intent(holder.imageView.context, PhotoViewActivity::class.java)
                 intent.putExtra("photo_path", photo.absolutePath)

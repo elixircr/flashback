@@ -18,12 +18,6 @@ import androidx.core.content.ContextCompat
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import android.widget.PopupMenu
-import android.widget.TextView
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import android.widget.LinearLayout
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,8 +42,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var galleryButton: Button
 
-    private var selectedExpiry = 30 // default expiry in days
-
 
 
 
@@ -71,8 +63,6 @@ class MainActivity : AppCompatActivity() {
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        deleteExpiredPhotos()
-
         if (hasCameraPermission()) {
             startCamera()
         } else {
@@ -92,23 +82,6 @@ class MainActivity : AppCompatActivity() {
 
         galleryButton.setOnClickListener {
             startActivity(Intent(this, GalleryActivity::class.java))
-        }
-
-        val expiryLabel = findViewById<TextView>(R.id.expiryLabel)
-        val expiryContainer = findViewById<LinearLayout>(R.id.expiryContainer)
-
-        expiryContainer.setOnClickListener {
-            val popup = PopupMenu(this, expiryContainer)
-            popup.menu.add(0, 1, 0, "1 day")
-            popup.menu.add(0, 5, 0, "5 days")
-            popup.menu.add(0, 30, 0, "30 days")
-
-            popup.setOnMenuItemClickListener { item ->
-                selectedExpiry = item.itemId  // itemId holds the day value we set above
-                expiryLabel.text = "${selectedExpiry}d"
-                true
-            }
-            popup.show()
         }
     }
 
@@ -162,9 +135,7 @@ class MainActivity : AppCompatActivity() {
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
 
-        val sdf = SimpleDateFormat("ddMMyy_HHmmss", Locale.getDefault())
-        val dateString = sdf.format(Date())
-        val photoFile = File(externalMediaDirs.firstOrNull(), "flashback_${dateString}_${selectedExpiry}d.jpg")
+        val photoFile = File(filesDir, "flashback_${System.currentTimeMillis()}.jpg")
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
@@ -197,32 +168,5 @@ class MainActivity : AppCompatActivity() {
         cameraExecutor.shutdown()
     }
 
-    private fun deleteExpiredPhotos() {
-        val dir = externalMediaDirs.firstOrNull() ?: return
-        val sdf = SimpleDateFormat("ddMMyy_HHmmss", Locale.getDefault())
-        val now = Date()
-
-        dir.listFiles { file ->
-            file.name.startsWith("flashback_") && file.name.endsWith(".jpg")
-        }?.forEach { file ->
-            try {
-                // filename pattern: flashback_230426_143022_30d.jpg
-                val parts = file.nameWithoutExtension.split("_")
-                // parts[0] = "flashback", parts[1] = "230426", parts[2] = "143022", parts[3] = "30d"
-                val datePart = "${parts[1]}_${parts[2]}"
-                val expiryDays = parts[3].removeSuffix("d").toInt()
-
-                val takenDate = sdf.parse(datePart) ?: return@forEach
-                val expiryMs = expiryDays * 24 * 60 * 60 * 1000L
-                val expiryDate = Date(takenDate.time + expiryMs)
-
-                if (now.after(expiryDate)) {
-                    file.delete()
-                }
-            } catch (e: Exception) {
-                // skip files that don't match the pattern
-            }
-        }
-    }
 
 }
