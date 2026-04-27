@@ -28,6 +28,9 @@
         <activity
             android:name=".GalleryActivity"
             android:exported="false" />
+        <activity
+            android:name=".PhotoViewActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

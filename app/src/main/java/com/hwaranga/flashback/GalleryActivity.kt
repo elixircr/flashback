@@ -11,6 +11,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import java.io.File
+import android.content.Intent
+import android.widget.TextView
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class GalleryActivity : AppCompatActivity() {
 
@@ -45,6 +50,7 @@ class GalleryActivity : AppCompatActivity() {
 
         class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val imageView: ImageView = view.findViewById(R.id.photoImageView)
+            val expiryBadge: TextView = view.findViewById(R.id.expiryBadge)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
@@ -54,10 +60,37 @@ class GalleryActivity : AppCompatActivity() {
         }
 
         override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
+            val photo = photos[position]
+
             Glide.with(holder.imageView.context)
-                .load(photos[position])
+                .load(photo)
                 .centerCrop()
                 .into(holder.imageView)
+
+            // parse days remaining from filename
+            try {
+                val parts = photo.nameWithoutExtension.split("_")
+                val datePart = "${parts[1]}_${parts[2]}"
+                val expiryDays = parts[3].removeSuffix("d").toInt()
+
+                val sdf = SimpleDateFormat("ddMMyy_HHmmss", Locale.getDefault())
+                val takenDate = sdf.parse(datePart)!!
+                val expiryMs = expiryDays * 24 * 60 * 60 * 1000L
+                val expiryDate = Date(takenDate.time + expiryMs)
+
+                val daysLeft = ((expiryDate.time - Date().time) / (1000 * 60 * 60 * 24)).toInt()
+                    .coerceAtLeast(0)
+
+                holder.expiryBadge.text = "${daysLeft}d"
+            } catch (e: Exception) {
+                holder.expiryBadge.text = ""
+            }
+
+            holder.imageView.setOnClickListener {
+                val intent = Intent(holder.imageView.context, PhotoViewActivity::class.java)
+                intent.putExtra("photo_path", photo.absolutePath)
+                holder.imageView.context.startActivity(intent)
+            }
         }
 
         override fun getItemCount() = photos.size
