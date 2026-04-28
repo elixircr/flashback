@@ -4,6 +4,7 @@
     android:layout_height="120dp"
     android:padding="2dp">
 
+<!--    image view holder for each grid component -->
     <ImageView
         android:id="@+id/photoImageView"
         android:layout_width="match_parent"

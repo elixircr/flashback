@@ -5,12 +5,14 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
+<!--    grid view stack-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/galleryRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="180px" />
 
+<!--    return button -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="48dp"
