@@ -4,7 +4,6 @@
 
     <uses-feature android:name="android.hardware.camera.any"/>
     <uses-permission android:name="android.permission.CAMERA"/>
-        android:maxSdkVersion="36"/>
 
     <application
         android:allowBackup="true"

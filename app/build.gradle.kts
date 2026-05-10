@@ -45,8 +45,6 @@ dependencies {
     implementation("androidx.camera:camera-camera2:${cameraxVersion}")
     // If you want to additionally use the CameraX Lifecycle library
     implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
-    // connects app to hardware
-    implementation("androidx.camera:camera-camera2:${cameraxVersion}")
     // If you want to additionally use the CameraX View class
     implementation("androidx.camera:camera-view:${cameraxVersion}")
 
