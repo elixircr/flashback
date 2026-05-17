@@ -24,6 +24,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import android.widget.LinearLayout
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 
 class MainActivity : AppCompatActivity() {
 
@@ -110,6 +113,27 @@ class MainActivity : AppCompatActivity() {
             }
             popup.show()
         }
+
+        createNotificationChannel()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                101
+            )
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.READ_MEDIA_IMAGES
+                ),
+                101
+            )
+        }
     }
 
     private fun hasCameraPermission(): Boolean {
@@ -164,7 +188,9 @@ class MainActivity : AppCompatActivity() {
 
         val sdf = SimpleDateFormat("ddMMyy_HHmmss", Locale.getDefault())
         val dateString = sdf.format(Date())
-        val photoFile = File(externalMediaDirs.firstOrNull(), "flashback_${dateString}_${selectedExpiry}d.jpg")
+
+        // CHANGED: Using filesDir instead of externalMediaDirs
+        val photoFile = File(filesDir, "flashback_${dateString}_${selectedExpiry}d.jpg")
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
@@ -198,7 +224,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun deleteExpiredPhotos() {
-        val dir = externalMediaDirs.firstOrNull() ?: return
+        // CHANGED: Targeting filesDir directly
+        val dir = filesDir ?: return
         val sdf = SimpleDateFormat("ddMMyy_HHmmss", Locale.getDefault())
         val now = Date()
 
@@ -223,6 +250,15 @@ class MainActivity : AppCompatActivity() {
                 // skip files that don't match the pattern
             }
         }
+    }
+
+    private fun createNotificationChannel() {
+        val channel = NotificationChannel(
+            "flashback_channel",
+            "Flashback Notifications",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
     }
 
 }

@@ -38,7 +38,8 @@ class GalleryActivity : AppCompatActivity() {
     }
 
     private fun getAppPhotos(): List<File> {
-        val dir = externalMediaDirs.firstOrNull() ?: return emptyList()
+        // CHANGED: Targeting filesDir directly instead of externalMediaDirs
+        val dir = filesDir ?: return emptyList()
         return dir.listFiles { file ->
             file.name.startsWith("flashback_") && file.name.endsWith(".jpg")
         }?.sortedByDescending { it.lastModified() } ?: emptyList()
