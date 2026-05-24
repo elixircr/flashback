@@ -5,14 +5,14 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-<!--    full image view component-->
+<!--    imageview -->
     <ImageView
         android:id="@+id/fullImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitCenter" />
 
-<!--    back button -->
+<!--    buttons -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="48dp"

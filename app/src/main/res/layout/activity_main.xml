@@ -7,12 +7,14 @@
     android:layout_height="match_parent"
     tools:ignore="ExtraText">
 
+<!--    previewview-->
     <androidx.camera.view.PreviewView
 
         android:id="@+id/previewView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+<!--    layout for dropdown-->
     <LinearLayout
         android:layout_margin="40dp"
         android:id="@+id/expiryContainer"
@@ -43,6 +45,7 @@
 
     </LinearLayout>
 
+<!--    buttons-->
     <ImageButton
         android:contentDescription="SwitchCamButton"
         android:id="@+id/switchCamButton"

@@ -1,5 +1,6 @@
 package com.hwaranga.flashback
 
+// imports
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -34,14 +35,16 @@ class MainActivity : AppCompatActivity() {
 
     // variables
 
-    // lateinit means not defined yet but will be later
+    //lateinit initialises variables later
+
+    private lateinit var cameraExecutor: ExecutorService
     private lateinit var previewView: PreviewView
 
     private lateinit var cameraButton: ImageButton
 
-    private lateinit var cameraExecutor: ExecutorService
-
     private lateinit var switchCamButton: ImageButton
+
+    private lateinit var galleryButton: ImageButton
 
     // means that this var is nullable
     private var imageCapture: ImageCapture? = null
@@ -50,20 +53,17 @@ class MainActivity : AppCompatActivity() {
 
     private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
-    private lateinit var galleryButton: ImageButton
-
-    private var selectedExpiry = 30 // default expiry in days
+    private var selectedExpiry = 30
 
 
 
 
-    // sets companion object func can be seen as a static class holder for variables
+    // static class holder for variables
     companion object {
-        // const val means that this value will be hardcoded to be 100 and does not change
         private const val CAMERA_PERMISSION_CODE = 100
     }
 
-    // pretty much same as a void start func
+    // pretty much same as a void start func; runs when script is first created
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -72,6 +72,10 @@ class MainActivity : AppCompatActivity() {
         previewView = findViewById(R.id.previewView)
         cameraButton = findViewById(R.id.cameraButton)
         switchCamButton = findViewById(R.id.switchCamButton)
+        galleryButton = findViewById(R.id.galleryButton)
+
+        val expiryLabel = findViewById<TextView>(R.id.expiryLabel)
+        val expiryContainer = findViewById<LinearLayout>(R.id.expiryContainer)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
@@ -92,31 +96,34 @@ class MainActivity : AppCompatActivity() {
             switchCam()
         }
 
-        galleryButton = findViewById(R.id.galleryButton)
-
         galleryButton.setOnClickListener {
             startActivity(Intent(this, GalleryActivity::class.java))
         }
 
-        val expiryLabel = findViewById<TextView>(R.id.expiryLabel)
-        val expiryContainer = findViewById<LinearLayout>(R.id.expiryContainer)
 
+
+        // runs when expiry date change button is clicked
         expiryContainer.setOnClickListener {
             val popup = PopupMenu(this, expiryContainer)
+
             popup.menu.add(0, 1, 0, "1 day")
             popup.menu.add(0, 5, 0, "5 days")
             popup.menu.add(0, 30, 0, "30 days")
 
+            popup.show()
+
+            // runs when user selects a date
             popup.setOnMenuItemClickListener { item ->
-                selectedExpiry = item.itemId  // itemId holds the day value we set above
+                selectedExpiry = item.itemId
                 expiryLabel.text = "${selectedExpiry}d"
                 true
             }
-            popup.show()
         }
 
+        // creates notification channel
         createNotificationChannel()
 
+        // requests media reading and notification permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.requestPermissions(
                 this,
@@ -129,16 +136,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // returns bool as true if permission has been given already
     private fun hasCameraPermission(): Boolean {
-        // checks if user already gave perms
         return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
     }
 
+    //  requests for camera permissions
     private fun requestCameraPermission() {
         // requests for camera perms
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
     }
 
+    // OnRequestPermissionsResult runs after user responds to a permission dialog
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CAMERA_PERMISSION_CODE) {
@@ -150,6 +159,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // start camera func; begins the camera on its own thread and binds it when ready
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
@@ -159,6 +169,7 @@ class MainActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
+    // binds camera to previewview ui so that the user can see the camera activity
     private fun bindCamera() {
         val cameraProvider = cameraProvider ?: return
 
@@ -168,6 +179,7 @@ class MainActivity : AppCompatActivity() {
 
         imageCapture = ImageCapture.Builder().build()
 
+        // clears all the previous bindings before applying new ones to not get any bugs
         try {
             cameraProvider.unbindAll()
             cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
@@ -176,6 +188,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // take photo func; gets the date of current time using the sdf and sets it to the name of the photo, along with the expiry date. saves it to app's internal storage
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
 
@@ -196,12 +209,13 @@ class MainActivity : AppCompatActivity() {
 
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                 runOnUiThread {
-                    Toast.makeText(this@MainActivity, "Saved: ${photoFile.absolutePath}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@MainActivity, "Photo taken.", Toast.LENGTH_LONG).show()
                 }
             }
         })
     }
 
+    // switch camera function; switches camera
     private fun switchCam() {
         cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA)
             CameraSelector.DEFAULT_FRONT_CAMERA
@@ -211,13 +225,15 @@ class MainActivity : AppCompatActivity() {
         bindCamera()
     }
 
+    // closes camera when app closes so it doesnt run in background
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
     }
 
+    // file auto deletion func;
     private fun deleteExpiredPhotos() {
-        // CHANGED: Targeting filesDir directly
+
         val dir = filesDir ?: return
         val sdf = SimpleDateFormat("ddMMyy_HHmmss", Locale.getDefault())
         val now = Date()
@@ -226,12 +242,12 @@ class MainActivity : AppCompatActivity() {
             file.name.startsWith("flashback_") && file.name.endsWith(".jpg")
         }?.forEach { file ->
             try {
-                // filename pattern: flashback_230426_143022_30d.jpg
                 val parts = file.nameWithoutExtension.split("_")
-                // parts[0] = "flashback", parts[1] = "230426", parts[2] = "143022", parts[3] = "30d"
+                //e.g. how the parts are split would be parts[0] = "flashback", parts[1] = "230426", parts[2] = "143022", parts[3] = "30d"
                 val datePart = "${parts[1]}_${parts[2]}"
                 val expiryDays = parts[3].removeSuffix("d").toInt()
 
+                // changes datePart back to date format
                 val takenDate = sdf.parse(datePart) ?: return@forEach
                 val expiryMs = expiryDays * 24 * 60 * 60 * 1000L
                 val expiryDate = Date(takenDate.time + expiryMs)
@@ -239,12 +255,11 @@ class MainActivity : AppCompatActivity() {
                 if (now.after(expiryDate)) {
                     file.delete()
                 }
-            } catch (e: Exception) {
-                // skip files that don't match the pattern
-            }
+            } catch (e: Exception) { }
         }
     }
 
+    // creates notification channel which is needed to send notifications
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
             "flashback_channel",
