@@ -27,6 +27,7 @@ import android.widget.LinearLayout
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import android.widget.ImageButton
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,11 +37,11 @@ class MainActivity : AppCompatActivity() {
     // lateinit means not defined yet but will be later
     private lateinit var previewView: PreviewView
 
-    private lateinit var cameraButton: Button
+    private lateinit var cameraButton: ImageButton
 
     private lateinit var cameraExecutor: ExecutorService
 
-    private lateinit var switchCamButton: Button
+    private lateinit var switchCamButton: ImageButton
 
     // means that this var is nullable
     private var imageCapture: ImageCapture? = null
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
-    private lateinit var galleryButton: Button
+    private lateinit var galleryButton: ImageButton
 
     private var selectedExpiry = 30 // default expiry in days
 
@@ -115,14 +116,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         createNotificationChannel()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                101
-            )
-        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.requestPermissions(

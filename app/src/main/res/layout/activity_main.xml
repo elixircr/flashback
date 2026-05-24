@@ -8,11 +8,13 @@
     tools:ignore="ExtraText">
 
     <androidx.camera.view.PreviewView
+
         android:id="@+id/previewView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <LinearLayout
+        android:layout_margin="40dp"
         android:id="@+id/expiryContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -41,31 +43,40 @@
 
     </LinearLayout>
 
-    <Button
+    <ImageButton
+        android:contentDescription="SwitchCamButton"
         android:id="@+id/switchCamButton"
         android:layout_width="59dp"
         android:layout_height="64dp"
         android:layout_gravity="bottom|start"
-        android:layout_margin="16dp"
-        android:backgroundTint="@color/white"
+        android:layout_margin="20dp"
+        android:src="@drawable/switch_cam_button_2"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
         android:hapticFeedbackEnabled="true" />
 
-    <Button
+    <ImageButton
+        android:contentDescription="CameraButton"
+        android:src="@drawable/shutter_button_2"
         android:id="@+id/cameraButton"
         android:layout_width="59dp"
         android:layout_height="64dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_margin="16dp"
-        android:backgroundTint="@color/white"
+        android:layout_margin="20dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
         android:hapticFeedbackEnabled="true" />
 
-    <Button
+    <ImageButton
+        android:contentDescription="GalleryButton"
+        android:src="@drawable/gallery_button_2"
         android:id="@+id/galleryButton"
         android:layout_width="59dp"
         android:layout_height="64dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:backgroundTint="@color/white"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
         android:hapticFeedbackEnabled="true" />
 
 

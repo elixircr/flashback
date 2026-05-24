@@ -79,7 +79,7 @@ class GalleryActivity : AppCompatActivity() {
                 val expiryMs = expiryDays * 24 * 60 * 60 * 1000L
                 val expiryDate = Date(takenDate.time + expiryMs)
 
-                val daysLeft = ((expiryDate.time - Date().time) / (1000 * 60 * 60 * 24)).toInt()
+                val daysLeft = ((expiryDate.time - Date().time + (1000 * 60 * 60 * 24 - 1)) / (1000 * 60 * 60 * 24)).toInt()
                     .coerceAtLeast(0)
 
                 holder.expiryBadge.text = "${daysLeft}d"
@@ -94,6 +94,14 @@ class GalleryActivity : AppCompatActivity() {
             }
         }
 
+
+
         override fun getItemCount() = photos.size
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val photos = getAppPhotos()
+        recyclerView.adapter = GalleryAdapter(photos)
     }
 }
